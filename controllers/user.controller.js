@@ -43,6 +43,37 @@ module.exports.updateUser = async (req, res) => {
   }
 };
 
+module.exports.upgradeUserToSuperAdmin = async (req, res) => {
+  if (!ObjectID.isValid(req.params.id))
+    return res.status(400).send("ID unknonw : " + req.params.id);
+
+  const upgradeToSuperAdmin = {
+    superAdmin: req.body.superAdmin,
+  };
+
+  try {
+    await UserModel.findOneAndUpdate(
+      {
+        _id: req.params.id,
+      },
+      {
+        $set: {
+          superAdmin: !!upgradeToSuperAdmin,
+        },
+      },
+      {
+        new: true,
+        upsert: true,
+        setDefaultsOnInsert: true,
+      }
+    )
+      .then((docs) => res.send(docs))
+      .catch((err) => res.status(500).send({ message: err }));
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+};
+
 module.exports.deleteUser = async (req, res) => {
   if (!ObjectID.isValid(req.params.id))
     return res.status(400).send("ID unknonw : " + req.params.id);

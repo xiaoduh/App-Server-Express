@@ -78,6 +78,16 @@ const userSchema = new mongoose.Schema(
     jobPosted: {
       type: [String],
     },
+    admin: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
+    superAdmin: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
   },
   {
     timestamps: true,
