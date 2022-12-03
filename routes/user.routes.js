@@ -14,6 +14,7 @@ router.get("/logout", authController.logOut);
 router.get("/", userController.getAllUsers);
 router.get("/:id", userController.userInfo);
 router.put("/:id", userController.updateUser);
+router.put("/upgrade/:id", userController.upgradeUserToSuperAdmin);
 router.delete("/:id", userController.deleteUser);
 
 // upload pp
