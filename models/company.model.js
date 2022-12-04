@@ -2,10 +2,6 @@ const mongoose = require("mongoose");
 
 const CompanySchema = new mongoose.Schema(
   {
-    posterId: {
-      type: String,
-      required: true,
-    },
     nom: {
       type: String,
       required: true,
@@ -27,11 +23,9 @@ const CompanySchema = new mongoose.Schema(
     },
     likers: {
       type: [String],
-      required: true,
     },
     jobs: {
       type: [String],
-      required: true,
     },
     contact: {
       type: [
@@ -44,15 +38,9 @@ const CompanySchema = new mongoose.Schema(
           timestamp: Number,
         },
       ],
-      required: true,
     },
     competence: {
       type: [String],
-      required: true,
-    },
-    picture: {
-      type: String,
-      default: "./uploads/company/random-user.png",
     },
     video: {
       type: String,
