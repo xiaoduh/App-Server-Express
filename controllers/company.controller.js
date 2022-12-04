@@ -13,15 +13,10 @@ module.exports.readCompany = (req, res) => {
 
 module.exports.createCompany = async (req, res) => {
   const newCompany = new companyModel({
-    posterId: req.body.posterId,
     nom: req.body.nom,
     secteur: req.body.secteur,
     localisation: req.body.localisation,
     description: req.body.description,
-    likers: [],
-    jobs: [],
-    contact: [],
-    competence: req.body.competence,
     video: req.body.video,
   });
 

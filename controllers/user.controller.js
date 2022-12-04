@@ -16,7 +16,7 @@ module.exports.userInfo = (req, res) => {
   }).select("-password");
 };
 
-module.exports.updateUser = async (req, res) => {
+module.exports.updateUserBio = async (req, res) => {
   if (!ObjectID.isValid(req.params.id))
     return res.status(400).send("ID unknonw : " + req.params.id);
 
@@ -29,6 +29,37 @@ module.exports.updateUser = async (req, res) => {
         $set: {
           bio: req.body.bio,
         },
+      },
+      {
+        new: true,
+        upsert: true,
+        setDefaultsOnInsert: true,
+      }
+    )
+      .then((docs) => res.send(docs))
+      .catch((err) => res.status(500).send({ message: err }));
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+};
+
+module.exports.updateUser = async (req, res) => {
+  const editRecord = {
+    identifiant: req.body.identifiant,
+    nom: req.body.nom,
+    prenom: req.body.prenom,
+    email: req.body.email,
+    fonction: req.body.fonction,
+    salary: req.body.salary,
+  };
+
+  try {
+    await UserModel.findOneAndUpdate(
+      {
+        _id: req.params.id,
+      },
+      {
+        $set: editRecord,
       },
       {
         new: true,
