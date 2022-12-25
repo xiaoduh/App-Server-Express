@@ -10,7 +10,7 @@ router.post("/register", authController.signUp);
 router.post("/login", authController.signIn);
 router.get("/logout", authController.logOut);
 router.post("/forgot-password", authController.forgotPassword);
-router.get("/reset-password/:id/:token", authController.resetPassword);
+router.post("/reset-password/:id/:token", authController.resetPassword);
 
 // user DB
 router.get("/", userController.getAllUsers);

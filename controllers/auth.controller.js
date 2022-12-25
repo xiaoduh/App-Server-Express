@@ -1,5 +1,9 @@
 const UserModel = require("../models/user.model");
 const jwt = require("jsonwebtoken");
+const Token = require("../models/token.model");
+const sendEmail = require("../utils/sendEmail.utils");
+const Joi = require("joi");
+const crypto = require("crypto");
 
 const maxAge = 3 * 24 * 60 * 60 * 1000;
 
@@ -88,32 +92,57 @@ module.exports.signIn = async (req, res) => {
 };
 
 module.exports.forgotPassword = async (req, res) => {
-  const { email } = req.body;
-
   try {
-    const userToResetPassword = await UserModel.findOneAndUpdate({
-      email,
-    });
-    if (!userToResetPassword) return res.json({ status: "User not exist" });
-    const secret = process.env.TOKEN_SECRET + userToResetPassword.password;
-    const token = jwt.sign(
-      {
-        email: userToResetPassword.email,
-        id: userToResetPassword._id,
-      },
-      secret,
-      { expiresIn: "1m" }
-    );
-    const link = `http://localhost:5000/reset-password/${userToResetPassword._id}/${token}`;
-    console.log(link);
-  } catch (err) {
-    res.send(err);
+    // const schema = Joi.object({ email: Joi.string().email().required() });
+    // const { error } = schema.validate(req.body);
+    // if (error) return res.status(400).send(error.details[0].message);
+
+    const user = await UserModel.findOne({ email: req.body.email });
+    if (!user)
+      return res.status(400).send("user with given email doesn't exist");
+
+    let token = await Token.findOne({ userId: user._id });
+    if (!token) {
+      token = await new Token({
+        userId: user._id,
+        token: crypto.randomBytes(32).toString("hex"),
+      }).save();
+    }
+
+    const link = `${process.env.CLIENT_URL}/forgot-password/${user._id}/${token.token}`;
+    await sendEmail(user.email, "Password reset", link);
+
+    res.send("password reset link sent to your email account");
+  } catch (error) {
+    res.send("An error occured");
+    console.log(error);
   }
 };
 
 module.exports.resetPassword = async (req, res) => {
-  const { id, token } = req.params;
-  console.log(id, token);
+  try {
+    const schema = Joi.object({ password: Joi.string().required() });
+    const { error } = schema.validate(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+
+    const user = await UserModel.findById(req.params.id);
+    if (!user) return res.status(400).send("invalid link or expired");
+
+    const token = await Token.findOne({
+      userId: user._id,
+      token: req.params.token,
+    });
+    if (!token) return res.status(400).send("Invalid link or expired");
+
+    user.password = req.body.password;
+    await user.save();
+    await token.delete();
+
+    res.send("password reset sucessfully.");
+  } catch (error) {
+    res.send("An error occured");
+    console.log(error);
+  }
 };
 
 module.exports.logOut = async (req, res) => {
