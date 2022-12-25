@@ -1,0 +1,14 @@
+POST http://localhost:5000/api/register/ 
+
+content-type: application/json
+
+{
+    "identifiant": "davidvilla",
+    "nom": "villa",
+    "prenom": "david",
+    "email": "david.villa@gmail.com",
+    "tel": "0767987865",
+    "password": "davidv",
+    "fonction": "dev nodeJS",
+    "salary": "67000"
+}

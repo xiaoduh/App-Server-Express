@@ -1,0 +1,14 @@
+POST http://localhost:5000/api/job/
+
+content-type: application/json
+
+{
+    "jobId": "davidvilla",
+    "title": "villa",
+    "company": "david",
+    "email": "david.villa@gmail.com",
+    "tel": "0767987865",
+    "password": "davidv",
+    "fonction": "dev nodeJS",
+    "salary": "67000"
+}
