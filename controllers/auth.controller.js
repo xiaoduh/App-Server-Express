@@ -10,7 +10,7 @@ const createToken = (id) => {
 };
 
 module.exports.signUp = async (req, res) => {
-  const { identifiant, nom, prenom, email, tel, password, fonction, salary } =
+  const { identifiant, nom, prenom, tel, fonction, salaire, email, password } =
     req.body;
 
   try {
@@ -18,11 +18,11 @@ module.exports.signUp = async (req, res) => {
       identifiant,
       nom,
       prenom,
-      email,
       tel,
-      password,
       fonction,
-      salary,
+      salaire,
+      email,
+      password,
     });
     res.status(201).json({ user: user._id });
   } catch (err) {
@@ -34,7 +34,7 @@ module.exports.signUp = async (req, res) => {
       nom: "",
       prenom: "",
       fonction: "",
-      salary: "",
+      salaire: "",
     };
 
     if (
@@ -61,8 +61,8 @@ module.exports.signUp = async (req, res) => {
     if (err.message.includes("fonction"))
       errors.fonction = "Ta fonction n'est pas renseignée";
 
-    if (err.message.includes("salary"))
-      errors.salary = "Ton salaire n'est pas renseigné";
+    if (err.message.includes("salaire"))
+      errors.salaire = "Ton salaire n'est pas renseigné";
 
     res.status(200).json({ errors });
   }
@@ -85,6 +85,35 @@ module.exports.signIn = async (req, res) => {
       errors.password = "Le mot de passe ne correspond pas";
     res.status(200).json({ errors });
   }
+};
+
+module.exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const userToResetPassword = await UserModel.findOneAndUpdate({
+      email,
+    });
+    if (!userToResetPassword) return res.json({ status: "User not exist" });
+    const secret = process.env.TOKEN_SECRET + userToResetPassword.password;
+    const token = jwt.sign(
+      {
+        email: userToResetPassword.email,
+        id: userToResetPassword._id,
+      },
+      secret,
+      { expiresIn: "1m" }
+    );
+    const link = `http://localhost:5000/reset-password/${userToResetPassword._id}/${token}`;
+    console.log(link);
+  } catch (err) {
+    res.send(err);
+  }
+};
+
+module.exports.resetPassword = async (req, res) => {
+  const { id, token } = req.params;
+  console.log(id, token);
 };
 
 module.exports.logOut = async (req, res) => {

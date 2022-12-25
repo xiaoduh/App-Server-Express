@@ -55,7 +55,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       maxlength: 140,
     },
-    salary: {
+    salaire: {
       type: Number,
       required: true,
     },
@@ -81,12 +81,12 @@ const userSchema = new mongoose.Schema(
     admin: {
       type: Boolean,
       default: false,
-      required: true,
+      // required: true,
     },
     superAdmin: {
       type: Boolean,
       default: false,
-      required: true,
+      // required: true,
     },
   },
   {

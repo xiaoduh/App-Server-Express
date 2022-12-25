@@ -13,15 +13,13 @@ module.exports.readJob = (req, res) => {
 
 module.exports.createJob = async (req, res) => {
   const newJob = new jobModel({
-    auteurId: req.body.auteurId,
     companyId: req.body.companyId,
     titre: req.body.titre,
-    entreprise: req.body.entreprise,
     service: req.body.service,
     projet: req.body.projet,
     description: req.body.description,
-    profil: req.body.profil,
     competence: req.body.competence,
+    profil: req.body.profil,
     tjm: req.body.tjm,
     candidat: [],
     likers: [],

@@ -50,7 +50,7 @@ module.exports.updateUser = async (req, res) => {
     prenom: req.body.prenom,
     email: req.body.email,
     fonction: req.body.fonction,
-    salary: req.body.salary,
+    salaire: req.body.salaire,
   };
 
   try {
