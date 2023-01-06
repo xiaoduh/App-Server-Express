@@ -11,13 +11,15 @@ router.post("/login", authController.signIn);
 router.get("/logout", authController.logOut);
 router.post("/forgot-password", authController.forgotPassword);
 router.post("/reset-password/:id/:token", authController.resetPassword);
+// GET route which will validate the link and show password reset form
+router.get("/validate-link/:id/:token", authController.validateLink);
 
 // user DB
 router.get("/", userController.getAllUsers);
 router.get("/:id", userController.userInfo);
 router.put("/:id", userController.updateUserBio);
 router.put("/edit-user/:id", userController.updateUser);
-router.put("/upgrade/:id", userController.upgradeUserToSuperAdmin);
+// router.put("/upgrade/:id", userController.upgradeUserToSuperAdmin);
 router.delete("/:id", userController.deleteUser);
 
 // upload pp

@@ -99,7 +99,9 @@ module.exports.forgotPassword = async (req, res) => {
 
     const user = await UserModel.findOne({ email: req.body.email });
     if (!user)
-      return res.status(400).send("user with given email doesn't exist");
+      return res
+        .status(400)
+        .send("Il n'existe aucun compte correspondant à cette adresse email");
 
     let token = await Token.findOne({ userId: user._id });
     if (!token) {
@@ -109,10 +111,14 @@ module.exports.forgotPassword = async (req, res) => {
       }).save();
     }
 
-    const link = `${process.env.CLIENT_URL}/forgot-password/${user._id}/${token.token}`;
-    await sendEmail(user.email, "Password reset", link);
+    const link = `http://localhost:3000/reset-password/${user._id}/${token.token}`;
+    await sendEmail(
+      user.email,
+      "Ta demande de changement de mot de passe sur Tekos",
+      link
+    );
 
-    res.send("password reset link sent to your email account");
+    res.send("Un email t'as été envoyé à l'adresse Email renseignée");
   } catch (error) {
     res.send("An error occured");
     console.log(error);
@@ -121,9 +127,9 @@ module.exports.forgotPassword = async (req, res) => {
 
 module.exports.resetPassword = async (req, res) => {
   try {
-    const schema = Joi.object({ password: Joi.string().required() });
-    const { error } = schema.validate(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+    // const schema = Joi.object({ password: Joi.string().required() });
+    // const { error } = schema.validate(req.body);
+    // if (error) return res.status(400).send(error.details[0].message);
 
     const user = await UserModel.findById(req.params.id);
     if (!user) return res.status(400).send("invalid link or expired");
@@ -144,6 +150,22 @@ module.exports.resetPassword = async (req, res) => {
     console.log(error);
   }
 };
+
+// module.exports.validateLink = async (req, res) => {
+//   // show password reset form ou msg : le lien a expiré
+//   try {
+//     const user = await UserModel.findOne({ _id: req.params.id });
+//     if (!user) return res.status(400).send({ message: "Invalid link" });
+
+//     const token = await Token.findOne({
+//       userId: user._id,
+//       token: req.params.token,
+//     });
+//     if (!token) return res.status(400).send({ message: "Invalid token" });
+
+//     res.status(200).send({ message: "Link validated" });
+//   } catch (error) {}
+// };
 
 module.exports.logOut = async (req, res) => {
   res.cookie("jwt", "", { maxAge: 1 });
